@@ -20,7 +20,8 @@ const CONFIG = {
   APK_LITE: "https://github.com/sebassisamiami-sketch/luffy-home/releases/latest/download/LuffyHomeLite.apk",
   ADSENSE_CLIENT: "",   // ej. "ca-pub-1234567890123456"
   ADSENSE_SLOT: "",     // ej. "1234567890"
-  ESPERA: 5
+  ESPERA: 5,
+  CODIGO: "7485713"     // codigo de Downloader (go.aftvnews.com) que apunta a esta pagina
 };
 </script>
 <style>
@@ -121,7 +122,28 @@ const CONFIG = {
   other.textContent = lite ? "Descargar la Completa (Android 7+)" : "Descargar la Lite (TVs antiguos)";
   other.addEventListener("click", e => { e.preventDefault(); go(otherUrl); });
 
+  // opened on a phone or a computer (e.g. from a shared link): don't drop the APK there,
+  // show how to install it on the TV with the Downloader code instead
+  const ua = navigator.userAgent;
+  const isTv = /Android/i.test(ua) && (!/Mobile/i.test(ua) || /\bTV\b|AFT|BRAVIA|SmartTV|GoogleTV/i.test(ua));
+  if (!isTv) {
+    document.getElementById("detect").textContent = "Pantalla de inicio estilo Apple TV para tu Android TV";
+    document.querySelector(".dl").innerHTML =
+      "<div style='font-size:15px;letter-spacing:.12em;color:var(--dim)'>CÓDIGO PARA DOWNLOADER</div>" +
+      "<div style='font-size:64px;font-weight:700;letter-spacing:4px;margin:6px 0 10px'>" + CONFIG.CODIGO + "</div>" +
+      "<div class='msg' style='margin:0 0 18px;min-height:0'>En tu TV: instala <b>Downloader</b> desde Play Store, " +
+      "escribe este código y se instala solo.</div>" +
+      "<div class='alt' style='margin-top:4px'>¿Prefieres el archivo? <a href='" + CONFIG.APK_FULL + "'>Completa</a> · " +
+      "<a href='" + CONFIG.APK_LITE + "'>Lite</a></div>";
+    const main = document.querySelector(".main");
+    main.insertBefore(document.querySelector(".dl"), main.firstChild);   // the code first, the ad after
+    loadAd();
+    return;
+  }
+  loadAd();
+
   // the ad (only if AdSense is configured)
+  function loadAd() {
   if (CONFIG.ADSENSE_CLIENT && CONFIG.ADSENSE_SLOT) {
     const box = document.getElementById("adbox");
     box.textContent = ""; box.style.border = "0";
@@ -137,6 +159,7 @@ const CONFIG = {
     ins.setAttribute("data-full-width-responsive", "true");
     box.appendChild(ins);
     (window.adsbygoogle = window.adsbygoogle || []).push({});
+  }
   }
 
   // countdown ring, then the download starts by itself (or right away with "Saltar")
