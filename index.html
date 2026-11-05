@@ -8,18 +8,14 @@
 <!--
   ============================== CONFIGURACION ==============================
   1. APK_FULL / APK_LITE: enlaces DIRECTOS a los .apk (GitHub Releases "latest").
-  2. ADSENSE_CLIENT / ADSENSE_SLOT: tus datos de Google AdSense (ca-pub-... y el numero del bloque).
-     Si los dejas vacios, la pagina funciona igual, sin anuncio.
-  3. ESPERA: segundos que se ve el anuncio antes de que empiece la descarga sola.
-  En Downloader: crea el codigo en go.aftvnews.com apuntando a ESTA pagina (no al .apk).
+  2. ESPERA: segundos de cuenta regresiva antes de que empiece la descarga sola.
+  3. CODIGO: el codigo de Downloader que se muestra si abren la pagina en un celular o PC.
   ===========================================================================
 -->
 <script>
 const CONFIG = {
   APK_FULL: "https://github.com/sebassisamiami-sketch/luffy-home/releases/latest/download/LuffyHome.apk",
   APK_LITE: "https://github.com/sebassisamiami-sketch/luffy-home/releases/latest/download/LuffyHomeLite.apk",
-  ADSENSE_CLIENT: "",   // ej. "ca-pub-1234567890123456"
-  ADSENSE_SLOT: "",     // ej. "1234567890"
   ESPERA: 5,
   CODIGO: "4745935"     // codigo de Downloader (go.aftvnews.com): pasa por Linkvertise y luego llega a esta pagina
 };
@@ -33,15 +29,11 @@ const CONFIG = {
     font: 18px/1.45 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
     display: flex; flex-direction: column; align-items: center; padding: 40px 16px 56px;
   }
-  .logo { width: 84px; height: 84px; border-radius: 22px; display: grid; place-items: center; font-size: 44px;
-    background: linear-gradient(160deg, #3d8bff, #0a5ad6); box-shadow: 0 14px 40px #0a84ff55; }
+  .logo { width: 112px; height: 112px; border-radius: 26px; display: block; box-shadow: 0 16px 44px #0a84ff55; }
   h1 { font-size: clamp(30px, 4vw, 46px); margin: 20px 0 6px; font-weight: 700; letter-spacing: -.5px; }
   .sub { color: var(--dim); margin: 0 0 28px; text-align: center; }
-  .main { width: 100%; max-width: 980px; display: grid; grid-template-columns: 1fr 320px; gap: 24px; align-items: stretch; }
+  .main { width: 100%; max-width: 520px; }
   .card { background: var(--card); border: 1px solid var(--line); border-radius: 26px; padding: 28px; }
-  .ad { min-height: 250px; display: flex; flex-direction: column; justify-content: center; align-items: center; }
-  .ad .tag { align-self: flex-start; font-size: 12px; letter-spacing: .12em; color: var(--dim); margin-bottom: 10px; }
-  .ad .ph { flex: 1; width: 100%; border: 1px dashed #ffffff33; border-radius: 16px; display: grid; place-items: center; color: #ffffff55; min-height: 200px; }
   .dl { display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; }
   .ring { width: 132px; height: 132px; position: relative; }
   .ring svg { transform: rotate(-90deg); }
@@ -66,19 +58,15 @@ const CONFIG = {
   .steps { width: 100%; max-width: 980px; margin-top: 24px; }
   .steps ol { margin: 8px 0 0; padding-left: 22px; color: var(--dim); }
   footer { margin-top: 30px; color: #ffffff55; font-size: 13px; text-align: center; }
-  @media (max-width: 760px) { .main, .info { grid-template-columns: 1fr; } }
+  @media (max-width: 760px) { .info { grid-template-columns: 1fr; } }
 </style>
 </head>
 <body>
-  <div class="logo">&#8962;</div>
+  <img class="logo" src="data:image/png;base64,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" alt="Luffy Home">
   <h1>Luffy Home</h1>
   <p class="sub" id="detect">Pantalla de inicio estilo Apple TV para tu Android TV</p>
 
   <div class="main">
-    <div class="card ad">
-      <div class="tag">PUBLICIDAD</div>
-      <div class="ph" id="adbox">Espacio para anuncio</div>
-    </div>
     <div class="card dl">
       <div class="ring">
         <svg width="132" height="132"><circle class="bg" cx="66" cy="66" r="58"/><circle class="fg" id="fg" cx="66" cy="66" r="58"/></svg>
@@ -105,7 +93,7 @@ const CONFIG = {
     </ol>
   </div>
 
-  <footer>Luffy Home · gratis · los anuncios ayudan a mantenerlo</footer>
+  <footer>Luffy Home · gratis</footer>
 
 <script>
 (function () {
@@ -137,31 +125,7 @@ const CONFIG = {
       "escribe este código y se instala solo.</div>" +
       "<div class='alt' style='margin-top:4px'>¿Prefieres el archivo? <a href='" + CONFIG.APK_FULL + "'>Completa</a> · " +
       "<a href='" + CONFIG.APK_LITE + "'>Lite</a></div>";
-    const main = document.querySelector(".main");
-    main.insertBefore(document.querySelector(".dl"), main.firstChild);   // the code first, the ad after
-    loadAd();
     return;
-  }
-  loadAd();
-
-  // the ad (only if AdSense is configured)
-  function loadAd() {
-  if (CONFIG.ADSENSE_CLIENT && CONFIG.ADSENSE_SLOT) {
-    const box = document.getElementById("adbox");
-    box.textContent = ""; box.style.border = "0";
-    const s = document.createElement("script");
-    s.async = true; s.crossOrigin = "anonymous";
-    s.src = "https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=" + CONFIG.ADSENSE_CLIENT;
-    document.head.appendChild(s);
-    const ins = document.createElement("ins");
-    ins.className = "adsbygoogle"; ins.style.display = "block"; ins.style.width = "100%";
-    ins.setAttribute("data-ad-client", CONFIG.ADSENSE_CLIENT);
-    ins.setAttribute("data-ad-slot", CONFIG.ADSENSE_SLOT);
-    ins.setAttribute("data-ad-format", "auto");
-    ins.setAttribute("data-full-width-responsive", "true");
-    box.appendChild(ins);
-    (window.adsbygoogle = window.adsbygoogle || []).push({});
-  }
   }
 
   // countdown ring, then the download starts by itself (or right away with "Saltar")
