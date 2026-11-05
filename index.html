@@ -1,0 +1,168 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Luffy Home · Descarga</title>
+<meta name="description" content="Luffy Home: pantalla de inicio estilo Apple TV para Android TV y Google TV. Descarga gratis con Downloader.">
+<!--
+  ============================== CONFIGURACION ==============================
+  1. APK_FULL / APK_LITE: enlaces DIRECTOS a los .apk (GitHub Releases "latest").
+  2. ADSENSE_CLIENT / ADSENSE_SLOT: tus datos de Google AdSense (ca-pub-... y el numero del bloque).
+     Si los dejas vacios, la pagina funciona igual, sin anuncio.
+  3. ESPERA: segundos que se ve el anuncio antes de que empiece la descarga sola.
+  En Downloader: crea el codigo en go.aftvnews.com apuntando a ESTA pagina (no al .apk).
+  ===========================================================================
+-->
+<script>
+const CONFIG = {
+  APK_FULL: "https://github.com/sebassisamiami-sketch/luffy-home/releases/latest/download/LuffyHome.apk",
+  APK_LITE: "https://github.com/sebassisamiami-sketch/luffy-home/releases/latest/download/LuffyHomeLite.apk",
+  ADSENSE_CLIENT: "",   // ej. "ca-pub-1234567890123456"
+  ADSENSE_SLOT: "",     // ej. "1234567890"
+  ESPERA: 5
+};
+</script>
+<style>
+  :root { color-scheme: dark; --blue: #0a84ff; --text: #f5f5f7; --dim: #a1a1a6; --card: #1c1c22; --line: #ffffff1f; }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; min-height: 100vh; color: var(--text);
+    background: radial-gradient(120% 90% at 50% 0%, #2a2c38 0%, #0b0b0f 55%, #000 100%);
+    font: 18px/1.45 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    display: flex; flex-direction: column; align-items: center; padding: 40px 16px 56px;
+  }
+  .logo { width: 84px; height: 84px; border-radius: 22px; display: grid; place-items: center; font-size: 44px;
+    background: linear-gradient(160deg, #3d8bff, #0a5ad6); box-shadow: 0 14px 40px #0a84ff55; }
+  h1 { font-size: clamp(30px, 4vw, 46px); margin: 20px 0 6px; font-weight: 700; letter-spacing: -.5px; }
+  .sub { color: var(--dim); margin: 0 0 28px; text-align: center; }
+  .main { width: 100%; max-width: 980px; display: grid; grid-template-columns: 1fr 320px; gap: 24px; align-items: stretch; }
+  .card { background: var(--card); border: 1px solid var(--line); border-radius: 26px; padding: 28px; }
+  .ad { min-height: 250px; display: flex; flex-direction: column; justify-content: center; align-items: center; }
+  .ad .tag { align-self: flex-start; font-size: 12px; letter-spacing: .12em; color: var(--dim); margin-bottom: 10px; }
+  .ad .ph { flex: 1; width: 100%; border: 1px dashed #ffffff33; border-radius: 16px; display: grid; place-items: center; color: #ffffff55; min-height: 200px; }
+  .dl { display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; }
+  .ring { width: 132px; height: 132px; position: relative; }
+  .ring svg { transform: rotate(-90deg); }
+  .ring .n { position: absolute; inset: 0; display: grid; place-items: center; font-size: 44px; font-weight: 600; }
+  .ring circle { fill: none; stroke-width: 8; }
+  .ring .bg { stroke: #ffffff1a; }
+  .ring .fg { stroke: var(--blue); stroke-linecap: round; transition: stroke-dashoffset 1s linear; }
+  .msg { color: var(--dim); margin: 16px 0 20px; min-height: 52px; }
+  button, .btn {
+    font: inherit; font-weight: 600; border: 0; border-radius: 999px; padding: 15px 30px; cursor: pointer;
+    background: #ffffff26; color: var(--text); text-decoration: none; display: inline-block;
+    transition: transform .18s, background .18s, color .18s; outline: none;
+  }
+  button:focus, .btn:focus, button:hover, .btn:hover { background: #fff; color: #111; transform: scale(1.07); }
+  .alt { margin-top: 18px; font-size: 15px; color: var(--dim); }
+  .alt a { color: #64d2ff; }
+  .alt a:focus { outline: 2px solid #fff; border-radius: 6px; }
+  .info { width: 100%; max-width: 980px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-top: 24px; }
+  .info .card { padding: 22px; }
+  .info h3 { margin: 0 0 6px; font-size: 18px; }
+  .info p { margin: 0; color: var(--dim); font-size: 15px; }
+  .steps { width: 100%; max-width: 980px; margin-top: 24px; }
+  .steps ol { margin: 8px 0 0; padding-left: 22px; color: var(--dim); }
+  footer { margin-top: 30px; color: #ffffff55; font-size: 13px; text-align: center; }
+  @media (max-width: 760px) { .main, .info { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+  <div class="logo">&#8962;</div>
+  <h1>Luffy Home</h1>
+  <p class="sub" id="detect">Pantalla de inicio estilo Apple TV para tu Android TV</p>
+
+  <div class="main">
+    <div class="card ad">
+      <div class="tag">PUBLICIDAD</div>
+      <div class="ph" id="adbox">Espacio para anuncio</div>
+    </div>
+    <div class="card dl">
+      <div class="ring">
+        <svg width="132" height="132"><circle class="bg" cx="66" cy="66" r="58"/><circle class="fg" id="fg" cx="66" cy="66" r="58"/></svg>
+        <div class="n" id="n">5</div>
+      </div>
+      <div class="msg" id="msg">Tu descarga empieza sola en unos segundos…</div>
+      <button id="skip" autofocus>Saltar y descargar</button>
+      <div class="alt">¿Otra versión? <a href="#" id="other">Descargar la otra</a></div>
+    </div>
+  </div>
+
+  <div class="info">
+    <div class="card"><h3>Estilo Apple TV</h3><p>Íconos grandes, efectos de vidrio y fondos de pantalla para TV.</p></div>
+    <div class="card"><h3>Cualquier marca</h3><p>TCL, Sony, Hisense, Philips, Xiaomi y más. Se ajusta a tu TV y a tu control.</p></div>
+    <div class="card"><h3>Versión Lite</h3><p>Para TVs con Android 5 y 6 o con poca memoria. Se elige sola.</p></div>
+  </div>
+
+  <div class="card steps">
+    <h3 style="margin:0">Cómo instalar</h3>
+    <ol>
+      <li>Al terminar la descarga, pulsa <b>Instalar</b> (si lo pide, permite instalar apps de Downloader).</li>
+      <li>Abre Luffy Home y pulsa <b>Inicio</b> en tu control: elige Luffy Home como pantalla de inicio.</li>
+      <li>El asistente detecta tu TV y te recomienda la versión ideal.</li>
+    </ol>
+  </div>
+
+  <footer>Luffy Home · gratis · los anuncios ayudan a mantenerlo</footer>
+
+<script>
+(function () {
+  // which APK fits this TV: Android 7+ = Completa, Android 5-6 = Lite
+  const m = navigator.userAgent.match(/Android\s+(\d+)/i);
+  const ver = m ? parseInt(m[1], 10) : 99;
+  const lite = ver < 7;
+  let url = lite ? CONFIG.APK_LITE : CONFIG.APK_FULL;
+  const otherUrl = lite ? CONFIG.APK_FULL : CONFIG.APK_LITE;
+  document.getElementById("detect").textContent = m
+    ? "Detectamos Android " + ver + ": te damos la versión " + (lite ? "Lite (TVs antiguos)" : "Completa")
+    : "Pantalla de inicio estilo Apple TV para tu Android TV";
+  const other = document.getElementById("other");
+  other.textContent = lite ? "Descargar la Completa (Android 7+)" : "Descargar la Lite (TVs antiguos)";
+  other.addEventListener("click", e => { e.preventDefault(); go(otherUrl); });
+
+  // the ad (only if AdSense is configured)
+  if (CONFIG.ADSENSE_CLIENT && CONFIG.ADSENSE_SLOT) {
+    const box = document.getElementById("adbox");
+    box.textContent = ""; box.style.border = "0";
+    const s = document.createElement("script");
+    s.async = true; s.crossOrigin = "anonymous";
+    s.src = "https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=" + CONFIG.ADSENSE_CLIENT;
+    document.head.appendChild(s);
+    const ins = document.createElement("ins");
+    ins.className = "adsbygoogle"; ins.style.display = "block"; ins.style.width = "100%";
+    ins.setAttribute("data-ad-client", CONFIG.ADSENSE_CLIENT);
+    ins.setAttribute("data-ad-slot", CONFIG.ADSENSE_SLOT);
+    ins.setAttribute("data-ad-format", "auto");
+    ins.setAttribute("data-full-width-responsive", "true");
+    box.appendChild(ins);
+    (window.adsbygoogle = window.adsbygoogle || []).push({});
+  }
+
+  // countdown ring, then the download starts by itself (or right away with "Saltar")
+  const fg = document.getElementById("fg"), n = document.getElementById("n"), msg = document.getElementById("msg");
+  const C = 2 * Math.PI * 58;
+  fg.style.strokeDasharray = C; fg.style.strokeDashoffset = 0;
+  let left = CONFIG.ESPERA, done = false;
+  n.textContent = left;
+  const t = setInterval(() => {
+    left--;
+    n.textContent = Math.max(left, 0);
+    fg.style.strokeDashoffset = C * (1 - left / CONFIG.ESPERA);
+    if (left <= 0) go(url);
+  }, 1000);
+
+  function go(u) {
+    if (done && u === url) return;
+    done = true; url = u;
+    clearInterval(t);
+    n.textContent = "✓"; fg.style.strokeDashoffset = C;
+    msg.innerHTML = "Descargando… Si no empieza, <a href='" + u + "' style='color:#64d2ff'>pulsa aquí</a>.";
+    location.href = u;   // Downloader (and any TV browser) downloads the .apk from here
+  }
+  document.getElementById("skip").addEventListener("click", () => go(url));
+  document.getElementById("skip").focus();
+})();
+</script>
+</body>
+</html>
