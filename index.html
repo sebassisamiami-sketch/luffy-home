@@ -125,7 +125,9 @@ const CONFIG = {
   // opened on a phone or a computer (e.g. from a shared link): don't drop the APK there,
   // show how to install it on the TV with the Downloader code instead
   const ua = navigator.userAgent;
-  const isTv = /Android/i.test(ua) && (!/Mobile/i.test(ua) || /\bTV\b|AFT|BRAVIA|SmartTV|GoogleTV/i.test(ua));
+  // TVs have no touch screen (phones and tablets do); Downloader's browser may still say "Mobile"
+  const noTouch = !(navigator.maxTouchPoints > 0) && !("ontouchstart" in window);
+  const isTv = /Android/i.test(ua) && (noTouch || !/Mobile/i.test(ua) || /\bTV\b|AFT|BRAVIA|SmartTV|GoogleTV/i.test(ua));
   if (!isTv) {
     document.getElementById("detect").textContent = "Pantalla de inicio estilo Apple TV para tu Android TV";
     document.querySelector(".dl").innerHTML =
